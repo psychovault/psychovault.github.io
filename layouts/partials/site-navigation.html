@@ -1,0 +1,90 @@
+<nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l center items-center justify-between">
+    <a href="{{ .Site.Home.RelPermalink }}" class="f3 fw2 hover-white white-90 dib no-underline">
+      {{ with .Site.Params.site_logo }}
+        <img src="{{ urls.RelURL . }}" class="w100 mw5-ns" alt="{{ $.Site.Title }}" />
+      {{ else }}
+        {{ .Site.Title }}
+      {{ end }}
+    </a>
+    <div class="flex-l items-center">
+      {{ partials.Include "i18nlist.html" . }}
+      {{ if .Site.Menus.main }}
+        <ul class="{{ compare.Conditional (compare.Eq $.Site.Language.Direction "rtl") "pr0 ml3" "pl0 mr3" }}">
+          {{ range .Site.Menus.main }}
+          <li class="list f5 f4-ns fw4 dib {{ compare.Conditional (compare.Eq $.Site.Language.Direction "rtl") "pl3" "pr3" }}">
+            <a class="hover-white white-90 no-underline" href="{{ .URL }}" title="{{ lang.Translate "pageTitle" . }}">
+              {{ .Name }}
+            </a>
+          </li>
+          {{ end }}
+        </ul>
+      {{ end }}
+      {{ partials.IncludeCached "social/follow.html" . }}
+    </div>
+  </div>
+
+  <div class="auth0-nav-container" style="display: inline-flex; align-items: center; margin-left: 1rem;">
+  <div id="view-loading" style="color: white; font-size: 0.875rem;">Loading...</div>
+  <div id="view-error" hidden style="color: red; font-size: 0.875rem;"></div>
+  
+  <div id="view-authenticated" hidden style="display: inline-flex; align-items: center; gap: 10px;">
+    <span id="user-email" style="color: white; font-size: 0.875rem;"></span>
+    <button onclick="client.logout({logoutParams:{returnTo:location.origin}})" style="cursor: pointer;">Logout</button>
+  </div>
+  
+  <div id="view-unauthenticated" hidden style="display: inline-flex; gap: 10px;">
+    <button onclick="client.loginWithRedirect({authorizationParams:{screen_hint:'signup'}})" style="cursor: pointer;">Signup</button>
+    <button onclick="client.loginWithRedirect()" style="cursor: pointer;">Login</button>
+  </div>
+</div>
+</nav>
+
+
+<!-- Auth0 SPA SDK -->
+<script src="https://cdn.auth0.com/js/auth0-spa-js/2.18/auth0-spa-js.production.js"></script>
+
+<script>
+  // Helpers
+  const displayView = name => ['loading', 'error', 'authenticated', 'unauthenticated'].forEach(v => {
+    const el = document.getElementById(`view-${v}`);
+    if (el) el.hidden = v !== name;
+  });
+  const setTextContent = (id, content) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = content;
+  };
+
+  (async () => {
+    // Initialize the Auth0 SDK
+    window.client = await auth0.createAuth0Client({
+      domain: 'dev-y8vpz6tvpxcm0apl.us.auth0.com',
+      clientId: 'l32fBD3JwPZnX06pkj0uCRbmjn9Mchdv',
+      authorizationParams: { redirect_uri: location.origin },
+    });
+
+    // Handle errors returned by Auth0 after a redirect
+    if (location.search.includes("error=")) {
+      const params = new URLSearchParams(location.search);
+      setTextContent("view-error", `Error: ${params.get("error")}`);
+      displayView("error");
+      history.replaceState({}, "", location.pathname);
+      return;
+    }
+
+    // Handle the redirect callback after a successful login
+    if (location.search.includes("code=") && location.search.includes("state=")) {
+      await window.client.handleRedirectCallback();
+      history.replaceState({}, "", location.pathname);
+    }
+
+    if (await window.client.isAuthenticated()) {
+      const user = await window.client.getUser();
+      setTextContent("user-email", user.email);
+      displayView("authenticated");
+      return;
+    }
+
+    displayView("unauthenticated");
+  })();
+</script>
