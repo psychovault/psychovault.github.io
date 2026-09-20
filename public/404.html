@@ -132,8 +132,71 @@
 
     </div>
   </div>
+
+  <div class="auth0-nav-container" style="display: inline-flex; align-items: center; margin-left: 1rem;">
+  <div id="view-loading" style="color: white; font-size: 0.875rem;">Loading...</div>
+  <div id="view-error" hidden style="color: red; font-size: 0.875rem;"></div>
+  
+  <div id="view-authenticated" hidden style="display: inline-flex; align-items: center; gap: 10px;">
+    <span id="user-email" style="color: white; font-size: 0.875rem;"></span>
+    <button onclick="client.logout({logoutParams:{returnTo:location.origin}})" style="cursor: pointer;">Logout</button>
+  </div>
+  
+  <div id="view-unauthenticated" hidden style="display: inline-flex; gap: 10px;">
+    <button onclick="client.loginWithRedirect({authorizationParams:{screen_hint:'signup'}})" style="cursor: pointer;">Signup</button>
+    <button onclick="client.loginWithRedirect()" style="cursor: pointer;">Login</button>
+  </div>
+</div>
 </nav>
 
+
+
+<script src="https://cdn.auth0.com/js/auth0-spa-js/2.18/auth0-spa-js.production.js"></script>
+
+<script>
+  
+  const displayView = name => ['loading', 'error', 'authenticated', 'unauthenticated'].forEach(v => {
+    const el = document.getElementById(`view-${v}`);
+    if (el) el.hidden = v !== name;
+  });
+  const setTextContent = (id, content) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = content;
+  };
+
+  (async () => {
+    
+    window.client = await auth0.createAuth0Client({
+      domain: 'dev-y8vpz6tvpxcm0apl.us.auth0.com',
+      clientId: 'l32fBD3JwPZnX06pkj0uCRbmjn9Mchdv',
+      authorizationParams: { redirect_uri: location.origin },
+    });
+
+    
+    if (location.search.includes("error=")) {
+      const params = new URLSearchParams(location.search);
+      setTextContent("view-error", `Error: ${params.get("error")}`);
+      displayView("error");
+      history.replaceState({}, "", location.pathname);
+      return;
+    }
+
+    
+    if (location.search.includes("code=") && location.search.includes("state=")) {
+      await window.client.handleRedirectCallback();
+      history.replaceState({}, "", location.pathname);
+    }
+
+    if (await window.client.isAuthenticated()) {
+      const user = await window.client.getUser();
+      setTextContent("user-email", user.email);
+      displayView("authenticated");
+      return;
+    }
+
+    displayView("unauthenticated");
+  })();
+</script>
     </div>
   </header>
 
@@ -154,6 +217,33 @@
 </footer>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

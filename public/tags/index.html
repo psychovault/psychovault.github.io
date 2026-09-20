@@ -136,6 +136,21 @@
 
     </div>
   </div>
+
+  <div class="auth0-nav-container" style="display: inline-flex; align-items: center; margin-left: 1rem;">
+  <div id="view-loading" style="color: white; font-size: 0.875rem;">Loading...</div>
+  <div id="view-error" hidden style="color: red; font-size: 0.875rem;"></div>
+  
+  <div id="view-authenticated" hidden style="display: inline-flex; align-items: center; gap: 10px;">
+    <span id="user-email" style="color: white; font-size: 0.875rem;"></span>
+    <button onclick="client.logout({logoutParams:{returnTo:location.origin}})" style="cursor: pointer;">Logout</button>
+  </div>
+  
+  <div id="view-unauthenticated" hidden style="display: inline-flex; gap: 10px;">
+    <button onclick="client.loginWithRedirect({authorizationParams:{screen_hint:'signup'}})" style="cursor: pointer;">Signup</button>
+    <button onclick="client.loginWithRedirect()" style="cursor: pointer;">Login</button>
+  </div>
+</div>
 </nav>
 
       

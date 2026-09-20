@@ -5,8 +5,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     
     <title>My New Hugo Project</title>
-
-    
     <meta name="viewport" content="width=device-width,minimum-scale=1">
     <meta name="description" content="">
     <meta name="generator" content="Hugo 0.166.0">
@@ -127,73 +125,9 @@
   <div class="flex-l center items-center justify-between">
     <a href="/" class="f3 fw2 hover-white white-90 dib no-underline">
       
-        My New Hugo Project sadfasd
+        My New Hugo Project
       
     </a>
-
-    <!doctype html>
-<meta charset="UTF-8" />
-<title>Auth0 Sample App</title>
-
-<div id="view-loading">Loading...</div>
-
-<div id="view-error" hidden></div>
-
-<div id="view-authenticated" hidden>
-  <p>Logged in as <span id="user-email"></span></p>
-  <h1>User Profile</h1>
-  <pre id="user-profile"></pre>
-  <button onclick="client.logout({logoutParams:{returnTo:location.origin}})">Logout</button>
-</div>
-
-<div id="view-unauthenticated" hidden>
-  <button onclick="client.loginWithRedirect({authorizationParams:{screen_hint:'signup'}})">Signup</button>
-  <button onclick="client.loginWithRedirect()">Login</button>
-</div>
-
-<!-- Install the Auth0 SPA SDK -->
-<script src="https://cdn.auth0.com/js/auth0-spa-js/2.18/auth0-spa-js.production.js"></script>
-
-<script>
-  // Helpers
-  const displayView = name => ['loading', 'error', 'authenticated', 'unauthenticated'].forEach(v => document.getElementById(`view-${v}`).hidden = v !== name);
-  const setTextContent = (id, content) => document.getElementById(id).textContent = content;
-
-  (async () => {
-    // Initialize the Auth0 SDK
-    window.client = await auth0.createAuth0Client({
-      domain: 'dev-y8vpz6tvpxcm0apl.us.auth0.com',
-      clientId: 'l32fBD3JwPZnX06pkj0uCRbmjn9Mchdv',
-      authorizationParams: { redirect_uri: location.origin },
-    });
-
-    // Handle errors returned by Auth0 after a redirect
-    if (location.search.includes("error=")) {
-      const params = new URLSearchParams(location.search);
-      setTextContent("view-error", `Error: ${params.get("error")} — ${params.get("error_description")}`);
-      displayView("error");
-      history.replaceState({}, "", location.pathname);
-      return;
-    }
-
-    // Handle the redirect callback after a successful login
-    if (location.search.includes("code=") && location.search.includes("state=")) {
-      await window.client.handleRedirectCallback();
-      history.replaceState({}, "", location.pathname);
-    }
-
-    if (await window.client.isAuthenticated()) {
-      const user = await window.client.getUser();
-      setTextContent("user-email", user.email);
-      setTextContent("user-profile", JSON.stringify(user, null, 2));
-      displayView("authenticated");
-      return;
-    }
-
-    displayView("unauthenticated");
-  })();
-</script>
-
     <div class="flex-l items-center">
       
 
@@ -202,8 +136,71 @@
 
     </div>
   </div>
+
+  <div class="auth0-nav-container" style="display: inline-flex; align-items: center; margin-left: 1rem;">
+  <div id="view-loading" style="color: white; font-size: 0.875rem;">Loading...</div>
+  <div id="view-error" hidden style="color: red; font-size: 0.875rem;"></div>
+  
+  <div id="view-authenticated" hidden style="display: inline-flex; align-items: center; gap: 10px;">
+    <span id="user-email" style="color: white; font-size: 0.875rem;"></span>
+    <button onclick="client.logout({logoutParams:{returnTo:location.origin}})" style="cursor: pointer;">Logout</button>
+  </div>
+  
+  <div id="view-unauthenticated" hidden style="display: inline-flex; gap: 10px;">
+    <button onclick="client.loginWithRedirect({authorizationParams:{screen_hint:'signup'}})" style="cursor: pointer;">Signup</button>
+    <button onclick="client.loginWithRedirect()" style="cursor: pointer;">Login</button>
+  </div>
+</div>
 </nav>
 
+
+
+<script src="https://cdn.auth0.com/js/auth0-spa-js/2.18/auth0-spa-js.production.js"></script>
+
+<script>
+  
+  const displayView = name => ['loading', 'error', 'authenticated', 'unauthenticated'].forEach(v => {
+    const el = document.getElementById(`view-${v}`);
+    if (el) el.hidden = v !== name;
+  });
+  const setTextContent = (id, content) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = content;
+  };
+
+  (async () => {
+    
+    window.client = await auth0.createAuth0Client({
+      domain: 'dev-y8vpz6tvpxcm0apl.us.auth0.com',
+      clientId: 'l32fBD3JwPZnX06pkj0uCRbmjn9Mchdv',
+      authorizationParams: { redirect_uri: location.origin },
+    });
+
+    
+    if (location.search.includes("error=")) {
+      const params = new URLSearchParams(location.search);
+      setTextContent("view-error", `Error: ${params.get("error")}`);
+      displayView("error");
+      history.replaceState({}, "", location.pathname);
+      return;
+    }
+
+    
+    if (location.search.includes("code=") && location.search.includes("state=")) {
+      await window.client.handleRedirectCallback();
+      history.replaceState({}, "", location.pathname);
+    }
+
+    if (await window.client.isAuthenticated()) {
+      const user = await window.client.getUser();
+      setTextContent("user-email", user.email);
+      displayView("authenticated");
+      return;
+    }
+
+    displayView("unauthenticated");
+  })();
+</script>
       
       <div class="tc-l pv3 ph3 ph4-ns">
         <h1 class="f2 f-subheadline-l fw2 light-silver mb0 lh-title">
@@ -236,6 +233,33 @@
 </footer>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
