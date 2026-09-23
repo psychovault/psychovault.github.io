@@ -995,8 +995,10 @@
 
   <div id="view-authenticated" class="nav-actions" hidden>
     <p>Logged in as <span id="user-email"></span></p>
-    <h1>User Profile</h1>
-    <pre id="user-profile"></pre>
+    <div hidden> 
+      <h1>User Profile</h1>
+      <pre id="user-profile" hidden></pre>
+    </div>
     <button onclick="client.logout({logoutParams:{returnTo:location.origin}})" class="btn-outline">Logout</button>
   </div>
 
