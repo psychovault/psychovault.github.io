@@ -1,0 +1,14 @@
+{{define "main"}}
+<h1> {{.Title}}</h1>
+
+
+{{with .Params.works}}
+<h2>Works</h2>
+<ul> 
+    {{range . }}
+    <li>{{ . }}</li>
+    {{ end }}
+</ul>
+{{ end }}
+
+{{end}}

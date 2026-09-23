@@ -1,0 +1,15 @@
+{{ define "main" }}
+  <h1>All psy profiles</h1>
+  
+  <ul>
+    {{ range .Pages }}
+      <li>
+        <!-- .RelPermalink generates the relative URL to the single page -->
+        <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+        asdfasdf
+        <!-- You can even access your custom front matter here! -->
+        {{ with .Params.noun }} - <em>{{ . }}</em>{{ end }}
+      </li>
+    {{ end }}
+  </ul>
+{{ end }}
